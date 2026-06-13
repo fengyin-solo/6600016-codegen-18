@@ -12,3 +12,15 @@ export interface HistoryEntry {
   correct: boolean
   timestamp: number
 }
+
+export interface ReminderSchedule {
+  hour: number
+  minute: number
+  enabled: boolean
+}
+
+export interface ReminderRecord {
+  date: string
+  completed: boolean
+  completedAt?: number
+}

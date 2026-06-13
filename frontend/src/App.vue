@@ -3,7 +3,7 @@
     <h1 class="text-3xl font-bold text-amber-400">莫尔斯码实时训练与通讯器</h1>
 
     <!-- Tabs -->
-    <div class="flex gap-2">
+    <div class="flex gap-2 flex-wrap">
       <button v-for="tab in tabs" :key="tab.id" @click="activeTab = tab.id"
         class="px-4 py-2 rounded text-sm font-medium"
         :class="activeTab === tab.id ? 'bg-amber-500 text-black' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'">
@@ -54,6 +54,35 @@
       </div>
     </div>
 
+    <!-- Training Reminder -->
+    <div v-if="activeTab === 'reminder'">
+      <TrainingReminder />
+    </div>
+
+    <!-- Reminder Modal -->
+    <div v-if="store.showReminderModal"
+      class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+      <div class="bg-gray-900 rounded-2xl p-6 max-w-md w-full shadow-2xl border border-gray-700 animate-pulse">
+        <div class="text-center">
+          <div class="text-6xl mb-4">⏰</div>
+          <h2 class="text-2xl font-bold text-amber-400 mb-2">训练时间到！</h2>
+          <p class="text-gray-300 mb-6">
+            现在是每天的莫尔斯码训练时间，坚持练习才能进步哦！
+          </p>
+          <div class="flex gap-3">
+            <button @click="startTraining"
+              class="flex-1 bg-amber-500 text-black font-bold py-3 px-4 rounded-lg hover:bg-amber-400 transition-colors">
+              🚀 开始训练
+            </button>
+            <button @click="store.dismissReminder()"
+              class="flex-1 bg-gray-700 text-gray-300 font-medium py-3 px-4 rounded-lg hover:bg-gray-600 transition-colors">
+              稍后再说
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Settings -->
     <div class="bg-gray-900 rounded-xl p-4 grid grid-cols-3 gap-4">
       <div>
@@ -78,6 +107,7 @@ import { useMorseStore } from './store/morse'
 import { MORSE_TABLE } from './utils/morse-code'
 import WaveformDisplay from './components/WaveformDisplay.vue'
 import TrainingMode from './components/TrainingMode.vue'
+import TrainingReminder from './components/TrainingReminder.vue'
 
 const store = useMorseStore()
 const morseTable = MORSE_TABLE
@@ -86,6 +116,13 @@ const tabs = [
   { id: 'translate', label: '编码/解码' },
   { id: 'train', label: '训练模式' },
   { id: 'ref', label: '速查表' },
+  { id: 'reminder', label: '训练提醒' },
 ]
 const activeTab = ref('translate')
+
+function startTraining() {
+  activeTab.value = 'train'
+  store.dismissReminder()
+  store.markTodayCompleted()
+}
 </script>
